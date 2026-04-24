@@ -4,7 +4,7 @@ from funciones.funcCubicos import calcular_splines, interpolacion_lagrange
 
 # Datos de prueba (puedes cambiarlos)
 coordsX = np.array([0, 1, 2, 3])
-coordsY = np.array([0, 1, 16, 81])
+coordsY = np.array([0, -50, 30, 20])
 
 # 1. Calcular Coeficientes del Spline
 a, b, c, d = calcular_splines(coordsX, coordsY)
@@ -30,12 +30,13 @@ for val in x_grafica:
     dx = val - coordsX[idx]
     y_spline.append(a[idx]*dx**3 + b[idx]*dx**2 + c[idx]*dx + d[idx])
 
-plt.figure(figsize=(10, 6))
+fig = plt.figure(figsize=(10, 6))
 plt.plot(x_grafica, y_spline, label='Spline Cúbico', color='blue', linewidth=2)
 plt.plot(x_grafica, y_lagrange, '--', label='Lagrange', color='red', alpha=0.7)
-plt.scatter(coordsX, coordsY, color='black', zorder=5, label='Datos Originales')
+plt.scatter(coordsX, coordsY, color='black', zorder=5, label='Datos')
 
-plt.title('Comparación: Spline Cúbico vs Lagrange')
+fig.canvas.manager.set_window_title("Spline Cúbico vs. Lagrange")
+plt.title('Comparación: Spline Cúbico vs. Polinomio Interpolador de Lagrange')
 plt.xlabel('X')
 plt.ylabel('Y')
 plt.legend()
