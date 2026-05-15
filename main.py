@@ -8,6 +8,9 @@ def accion():
         pares = []
         for linea in lineas:
             valores = linea.split(" ")
+            if len(valores) != 2:
+                print("Error. Formato de coordenadas incorrecto.")
+                return
             pares.append([float(valores[0]), float(valores[1])])
         pares = sorted(pares)
         splines = Splines(pares)
