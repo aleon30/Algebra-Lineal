@@ -71,3 +71,64 @@ class Splines:
 
         plt.tight_layout()
         plt.show()
+    
+    def analisis_cuantitativo(self):
+        print("\n--- Análisis Cuantitativo: Diferencia Absoluta (Spline vs Lagrange) ---")
+        puntos_medios = self.coordsX[:-1] + np.diff(self.coordsX) / 2
+
+        diferencias = []
+        vals_spline = []
+        vals_lagrange = []
+
+        for pm in puntos_medios:
+            val_lagrange = interpolacion_lagrange(self.coordsX, self.coordsY, pm)
+            val_spline = self.evaluar_spline(np.array([pm]))[0]
+            diferencia = abs(val_lagrange - val_spline)
+            diferencias.append(diferencia)
+            vals_spline.append(val_spline)
+            vals_lagrange.append(val_lagrange)
+            print(f"Punto medio x={pm:.2f} | Spline: {val_spline:.4f} | Lagrange: {val_lagrange:.4f} | Dif. Absoluta: {diferencia:.4f}")
+
+        # --- Gráfica de diferencias ---
+        x_grafica = np.linspace(self.coordsX[0], self.coordsX[-1], 500)
+        dif_continua = np.abs(
+            self.evaluar_spline(x_grafica) -
+            np.array([interpolacion_lagrange(self.coordsX, self.coordsY, v) for v in x_grafica])
+        )
+
+        fig, ax = plt.subplots(figsize=(11, 5))
+
+        # Área bajo la curva de diferencia
+        ax.fill_between(x_grafica, dif_continua, alpha=0.15, color='steelblue')
+        ax.plot(x_grafica, dif_continua, color='steelblue', linewidth=2, label='|Spline − Lagrange|')
+
+        # Puntos medios destacados
+        ax.scatter(puntos_medios, diferencias, color='crimson', zorder=5,
+            s=70, label='Diferencia en puntos medios')
+
+        # Anotaciones en cada punto medio
+        for pm, dif in zip(puntos_medios, diferencias):
+            ax.annotate(f'{dif:.4f}', xy=(pm, dif),
+                        xytext=(0, 10), textcoords='offset points',
+                        ha='center', fontsize=8, color='crimson')
+
+        # Líneas verticales en los nodos originales
+        for x in self.coordsX:
+            ax.axvline(x, color='gray', linewidth=0.7, linestyle=':', alpha=0.6)
+
+        # Máxima diferencia
+        idx_max = np.argmax(dif_continua)
+        ax.annotate(f'Máx: {dif_continua[idx_max]:.4f}',
+                    xy=(x_grafica[idx_max], dif_continua[idx_max]),
+                    xytext=(15, -15), textcoords='offset points',
+                    arrowprops=dict(arrowstyle='->', color='navy'),
+                    fontsize=9, color='navy')
+
+        fig.canvas.manager.set_window_title("Análisis Cuantitativo")
+        ax.set_title('Diferencia Absoluta: Spline Cúbico vs. Polinomio de Lagrange', fontsize=13)
+        ax.set_xlabel('X')
+        ax.set_ylabel('|Diferencia|')
+        ax.legend()
+        ax.grid(True, alpha=0.4)
+        plt.tight_layout()
+        plt.show()

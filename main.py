@@ -4,7 +4,7 @@ from splinesCubicos import Splines
 
 # Funciones para los botones
 
-def accion():
+def accionGraficar():
     try:
         texto = str(entrada.get('1.0', 'end-1c'))
         if not texto.strip():
@@ -27,8 +27,28 @@ def accion():
         else:
             messagebox.showerror("Error", "Formato de coordenadas incorrecto.")
 
-def limpiar():
-    entrada.delete("1.0", tk.END)
+def accionAnalisisCuantitativo():
+    try:
+        texto = str(entrada.get('1.0', 'end-1c'))
+        if not texto.strip():
+            messagebox.showwarning("Aviso", "No se ha ingresado ninguna coordenada.")
+            return
+        lineas = texto.split("\n")
+        pares = []
+        for linea in lineas:
+            valores = linea.split(" ")
+            if len(valores) != 2:
+                messagebox.showerror("Error", "Formato de coordenadas incorrecto.")
+                return
+            pares.append([float(valores[0]), float(valores[1])])
+        pares = sorted(pares)
+        splines = Splines(pares)
+        splines.analisis_cuantitativo()
+    except:
+        if len(lineas) == 1:
+            messagebox.showerror("Error", "Debe haber al menos 2 coordenadas.")
+        else:
+            messagebox.showerror("Error", "Formato de coordenadas incorrecto.")
 
 # Configuración de la ventana principal
 
@@ -105,13 +125,13 @@ estilo.map("Graficar.TButton",
            background=[("active", "skyblue"), ("pressed", "#0099cc")],
            foreground=[("active", "white"),   ("pressed", "white")])
  
-estilo.configure("Limpiar.TButton",
+estilo.configure("Analisis.TButton",
                  font=("Helvetica", 12),
                  foreground="black",
-                 background="#808080",       
-                 bordercolor="#555555",
+                 background="blue",       
+                 bordercolor="darkblue",
                  padding=(20, 8))
-estilo.map("Limpiar.TButton",
+estilo.map("Analisis.TButton",
            background=[("active", "skyblue"), ("pressed", "#0099cc")],
            foreground=[("active", "white"),   ("pressed", "white")])
  
@@ -129,10 +149,10 @@ botones_frame = tk.Frame(ventana, bg="white")
 botones_frame.pack(pady=12)
  
 ttk.Button(botones_frame, text="Graficar Splines",
-           style="Graficar.TButton", command=accion).pack(pady=5)
+           style="Graficar.TButton", command=accionGraficar).pack(pady=5)
  
-ttk.Button(botones_frame, text="Limpiar",
-           style="Limpiar.TButton", command=limpiar).pack(pady=5)
+ttk.Button(botones_frame, text="Análisis Cuantitativo",
+           style="Analisis.TButton", command=accionAnalisisCuantitativo).pack(pady=5)
  
 ttk.Button(botones_frame, text="Salir",
            style="Salir.TButton", command=ventana.destroy).pack(pady=5)
