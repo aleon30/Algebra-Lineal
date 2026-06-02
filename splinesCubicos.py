@@ -91,7 +91,6 @@ class Splines:
             messagebox.showerror("Error", "Ingrese un número válido para X.")
 
     def analisis_cuantitativo(self):
-        print("\n--- Análisis Cuantitativo: Diferencia Absoluta (Spline vs Lagrange) ---")
         puntos_medios = self.coordsX[:-1] + np.diff(self.coordsX) / 2
 
         diferencias = []
@@ -105,7 +104,6 @@ class Splines:
             diferencias.append(diferencia)
             vals_spline.append(val_spline)
             vals_lagrange.append(val_lagrange)
-            print(f"Punto medio x={pm:.2f} | Spline: {val_spline:.4f} | Lagrange: {val_lagrange:.4f} | Dif. Absoluta: {diferencia:.4f}")
 
         # --- Gráfica de diferencias ---
         x_grafica = np.linspace(self.coordsX[0], self.coordsX[-1], 500)

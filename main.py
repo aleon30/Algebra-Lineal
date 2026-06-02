@@ -4,12 +4,13 @@ from splinesCubicos import Splines
 
 # Funciones para los botones
 
-def accionGraficar():
+def prepararPares():
     try:
         texto = str(entrada.get('1.0', 'end-1c'))
         if not texto.strip():
             messagebox.showwarning("Aviso", "No se ha ingresado ninguna coordenada.")
             return
+        texto = texto.strip()
         lineas = texto.split("\n")
         pares = []
         for linea in lineas:
@@ -20,35 +21,23 @@ def accionGraficar():
             pares.append([float(valores[0]), float(valores[1])])
         pares = sorted(pares)
         splines = Splines(pares)
-        splines.graficar()
+        return splines
     except:
         if len(lineas) == 1:
             messagebox.showerror("Error", "Debe haber al menos 2 coordenadas.")
         else:
             messagebox.showerror("Error", "Formato de coordenadas incorrecto.")
+    return None
+
+def accionGraficar():
+    splines = prepararPares()
+    if splines:
+        splines.graficar()
 
 def accionAnalisisCuantitativo():
-    try:
-        texto = str(entrada.get('1.0', 'end-1c'))
-        if not texto.strip():
-            messagebox.showwarning("Aviso", "No se ha ingresado ninguna coordenada.")
-            return
-        lineas = texto.split("\n")
-        pares = []
-        for linea in lineas:
-            valores = linea.split(" ")
-            if len(valores) != 2:
-                messagebox.showerror("Error", "Formato de coordenadas incorrecto.")
-                return
-            pares.append([float(valores[0]), float(valores[1])])
-        pares = sorted(pares)
-        splines = Splines(pares)
+    splines = prepararPares()
+    if splines:
         splines.analisis_cuantitativo()
-    except:
-        if len(lineas) == 1:
-            messagebox.showerror("Error", "Debe haber al menos 2 coordenadas.")
-        else:
-            messagebox.showerror("Error", "Formato de coordenadas incorrecto.")
 
 # Configuración de la ventana principal
 
