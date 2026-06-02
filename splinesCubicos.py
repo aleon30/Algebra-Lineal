@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.offsetbox import AnchoredText
 from funcionesPolinomios import calcular_splines, interpolacion_lagrange
+from matplotlib.widgets import TextBox
+from tkinter import messagebox
 
 class Splines:
     def __init__(self, pares):
@@ -69,9 +71,25 @@ class Splines:
         ax.legend(loc='upper right')
         ax.grid(True)
 
+        axbox = fig.add_axes([0.65, 0.1, 0.1, 0.05])
+        text_box = TextBox(axbox, 'Evaluar x: ')
+        text_box.on_submit(self.evaluar_punto)
+
         plt.tight_layout()
         plt.show()
     
+    def evaluar_punto(self, x):
+        try:
+            x_val = float(x)
+            if x_val < self.coordsX[0] or x_val > self.coordsX[-1]:
+                messagebox.showwarning("Aviso", "El valor de X está fuera del rango de los datos.")
+                return
+            y_spline = self.evaluar_spline(np.array([x_val]))[0]
+            y_lagrange = interpolacion_lagrange(self.coordsX, self.coordsY, x_val)
+            messagebox.showinfo("Resultado", f"Spline Cúbico: {y_spline:.4f}\nLagrange: {y_lagrange:.4f}")
+        except ValueError:
+            messagebox.showerror("Error", "Ingrese un número válido para X.")
+
     def analisis_cuantitativo(self):
         print("\n--- Análisis Cuantitativo: Diferencia Absoluta (Spline vs Lagrange) ---")
         puntos_medios = self.coordsX[:-1] + np.diff(self.coordsX) / 2
